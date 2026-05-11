@@ -11,16 +11,16 @@
   "license": "Apache-2.0",
   "author": "O(1) Labs <build@o1labs.org>",
   "type": "module",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./build/index.d.ts",
-      "import": "./build/index.js"
+      "types": "./build/src/index.d.ts",
+      "import": "./build/src/index.js"
     }
   },
   "files": [
-    "build",
+    "build/src",
     "src",
     "schema.graphql",
     "LICENSE",
