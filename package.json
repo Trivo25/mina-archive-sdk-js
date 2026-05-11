@@ -1,0 +1,60 @@
+{
+  "name": "@o1-labs/mina-archive-sdk",
+  "version": "0.0.1",
+  "description": "TypeScript/JavaScript SDK for interacting with Mina Archive Node GraphQL endpoints",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/o1-labs/mina-archive-sdk-js"
+  },
+  "homepage": "https://github.com/o1-labs/mina-archive-sdk-js",
+  "bugs": "https://github.com/o1-labs/mina-archive-sdk-js/issues",
+  "license": "Apache-2.0",
+  "author": "O(1) Labs <build@o1labs.org>",
+  "type": "module",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "import": "./build/index.js"
+    }
+  },
+  "files": [
+    "build",
+    "src",
+    "schema.graphql",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20.18.0"
+  },
+  "keywords": [
+    "mina",
+    "mina-protocol",
+    "archive-node",
+    "graphql",
+    "sdk",
+    "blockchain",
+    "zkapp"
+  ],
+  "scripts": {
+    "build": "rimraf build && tsc",
+    "test": "npm run build && npm run test:unit",
+    "test:unit": "node --enable-source-maps --test ./build/tests/*.test.js",
+    "test:integration": "npm run build && node --enable-source-maps --test --test-timeout 120000 ./build/tests/integration.test.js",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts' 'examples/**/*.ts'",
+    "check-schema-drift": "bash scripts/check_schema_drift.sh",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.7",
+    "@typescript-eslint/eslint-plugin": "^6.5.0",
+    "@typescript-eslint/parser": "^6.5.0",
+    "eslint": "^8.48.0",
+    "prettier": "3.0.3",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
+  }
+}
