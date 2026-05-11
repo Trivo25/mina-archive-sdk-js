@@ -1,18 +1,16 @@
 name: Release
 
-# Triggered by pushing a tag matching `v*`. Builds + tests, then creates a
-# GitHub release with auto-generated notes.
+# Triggered by pushing a `v*` tag. Publishes to npm using OIDC Trusted
+# Publishing — no NPM_TOKEN secret needed. The trust relationship is
+# configured on npmjs.com (Account → Trusted Publishers) and grants this
+# specific workflow file in this specific repo permission to publish
+# @o1-labs/mina-archive-sdk. Provenance attestations are generated
+# automatically so the npm page shows a "Provenance" badge linking back
+# to the exact CI run that built the tarball.
 #
-# NOTE: npm publishing is done manually from a maintainer's laptop, NOT here.
-# The @o1-labs npm account is shared and 2FA-protected with TOTP, which is
-# incompatible with non-interactive CI. Workflow:
-#
-#   npm login --scope=@o1-labs --auth-type=legacy
-#   npm publish --access public --otp=<TOTP code>
-#   git tag v<X.Y.Z> && git push origin v<X.Y.Z>   # this workflow then runs
-#
-# Keep the version bump + publish + tag in the same maintainer session so
-# the tag points at exactly what was published.
+# Release flow:
+#   - bump version in package.json
+#   - git tag vX.Y.Z && git push origin vX.Y.Z
 
 on:
   push:
@@ -20,20 +18,36 @@ on:
       - 'v*'
 
 permissions:
-  contents: write
+  contents: write   # GH release creation
+  id-token: write   # OIDC token issuance for npm
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20.18.0'
+          registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
+
       - run: npm ci
       - run: npm run build
       - run: npm run test:unit
+
+      - name: Verify tag matches package.json version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg=$(node -e "console.log(require('./package.json').version)")
+          if [ "$tag" != "$pkg" ]; then
+            echo "tag $GITHUB_REF_NAME does not match package.json $pkg"; exit 1
+          fi
+
+      - name: Publish to npm with provenance (OIDC)
+        run: npm publish --provenance --access public
+
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
