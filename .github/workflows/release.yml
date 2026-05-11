@@ -1,16 +1,18 @@
 name: Release
 
-# Triggered by pushing a `v*` tag. Publishes to npm using OIDC Trusted
-# Publishing — no NPM_TOKEN secret needed. The trust relationship is
-# configured on npmjs.com (Account → Trusted Publishers) and grants this
-# specific workflow file in this specific repo permission to publish
-# @o1-labs/mina-archive-sdk. Provenance attestations are generated
-# automatically so the npm page shows a "Provenance" badge linking back
-# to the exact CI run that built the tarball.
+# Triggered by pushing a `v*` tag. Publishes to npm via a long-lived
+# automation token stored as the NPM_TOKEN repo secret.
+#
+# The token was generated from the CLI with `npm token create` against the
+# shared @o1-labs account (web-based OIDC setup wasn't an option at the
+# time of bootstrap). Rotate periodically; if it leaks, revoke via
+# `npm token revoke <id>` and regenerate.
 #
 # Release flow:
 #   - bump version in package.json
 #   - git tag vX.Y.Z && git push origin vX.Y.Z
+#
+# Workflow refuses to publish if the tag doesn't match package.json.
 
 on:
   push:
@@ -18,8 +20,7 @@ on:
       - 'v*'
 
 permissions:
-  contents: write   # GH release creation
-  id-token: write   # OIDC token issuance for npm
+  contents: write
 
 jobs:
   release:
@@ -45,8 +46,10 @@ jobs:
             echo "tag $GITHUB_REF_NAME does not match package.json $pkg"; exit 1
           fi
 
-      - name: Publish to npm with provenance (OIDC)
-        run: npm publish --provenance --access public
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
 
       - name: Create GitHub release
         env:
