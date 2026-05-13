@@ -1,5 +1,5 @@
 {
-  "name": "@o1labs/mina-archive-sdk",
+  "name": "@o1-labs/mina-archive-sdk",
   "version": "0.0.1",
   "description": "TypeScript/JavaScript SDK for interacting with Mina Archive Node GraphQL endpoints",
   "repository": {
@@ -9,7 +9,7 @@
   "homepage": "https://github.com/o1-labs/mina-archive-sdk-js",
   "bugs": "https://github.com/o1-labs/mina-archive-sdk-js/issues",
   "license": "Apache-2.0",
-  "author": "O(1) Labs <build@o1labs.org>",
+  "author": "O(1) Labs <build@o1-labs.org>",
   "type": "module",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
@@ -38,6 +38,9 @@
     "blockchain",
     "zkapp"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "rimraf build && tsc",
     "test": "npm run build && npm run test:unit",
