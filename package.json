@@ -9,7 +9,7 @@
   "homepage": "https://github.com/o1-labs/mina-archive-sdk-js",
   "bugs": "https://github.com/o1-labs/mina-archive-sdk-js/issues",
   "license": "Apache-2.0",
-  "author": "O(1) Labs <build@o1-labs.org>",
+  "author": "O(1) Labs <build@o1labs.org>",
   "type": "module",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
